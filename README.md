@@ -12,6 +12,8 @@ The main.bicep file defines the infrastructure for a DevTest Lab environment wit
 
 
 ## Prerequisites
+
+> This template will create infrastructure and deploy code to Azure. If you don't have an Azure Subscription, you can sign up for a [free account here](https://azure.microsoft.com/free/). Make sure you have contributor role to the Azure subscription.
 The following prerequisites are required to use this application. Please ensure that you have them all installed locally.
 
 - [Azure Developer CLI](https://aka.ms/azd-install)
@@ -38,7 +40,15 @@ The following prerequisites are required to use this application. Please ensure 
     - Default: Windows 11 (Pro, 22H2). \
     - Preinstalled artifacts needed for test execution such as browsers, powershell, nodejs etc.
 
-### Quickstart
+## Application Architecture
+
+This application utilizes the following Azure resources:
+
+- [**Azure DevTest Labs**](https://learn.microsoft.com/en-us/azure/devtest-labs/devtest-lab-overview) to managing infrastructure-as-a-service (IaaS) virtual machines (VMs) in labs.
+
+
+
+## Quickstart
 To learn how to get started with any azure azd, follow the steps in [Quickstart: Deploy an Azure Developer CLI template](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/get-started?tabs=localinstall&pivots=programming-language-nodejs) 
 
 This quickstart will show you how to authenticate on Azure, initialize using a template, provision infrastructure and deploy code on Azure via the following commands:
