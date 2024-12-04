@@ -20,28 +20,28 @@ The following prerequisites are required to use this application. Please ensure 
 - [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) - for the API backend
 
 ## Overview
-__Scope:__  \
-Subscription-level deployment. 
+### Scope: 
+- Subscription-level deployment. 
 
-__Purpose:__  
-Provision a DevTest Lab environment with: \
-    - A configurable Linux application server/ windows application server vm to deploy for example a deployment of an onprem docker enviroment. \
-    - Multiple Windows client VMs for system testing where you need more control over the VM's (For example, hardware in the loop testing ).
+### Purpose:
+ Provision a DevTest Lab environment with: 
+- A configurable Linux application server/ windows application server vm to deploy for example a deployment of an onprem docker enviroment.
+- Multiple Windows client VMs for system testing where you need more control over the VM's (For example, hardware in the loop testing ).
 
 
 ## Key Resources
-__DevTest Lab:__ \
-    - Creates a DevTest Lab named devtestlab01 (default).
+### DevTest Lab:
+ - Creates a DevTest Lab named devtestlab01 (default).
 
-__Linux Application Server:__ \
-    - Single VM for application hosting. \
-    - Ubuntu-based (default image: 20.04 LTS). \
-    - Preinstalled artifacts such as Docker, Docker compose plugin, agent etc.
+### Linux Application Server:
+- Single VM for application hosting.
+- Ubuntu-based (default image: 20.04 LTS).
+- Preinstalled artifacts such as Docker, Docker compose plugin, agent etc.
 
-__Windows Client VMs:__ \
-    - Deploys one or more Windows VMs (up to 10). \
-    - Default: Windows 11 (Pro, 22H2). \
-    - Preinstalled artifacts needed for test execution such as browsers, powershell, nodejs etc.
+### Windows Client VMs:
+- Deploys one or more Windows VMs (up to 10).
+- Default: Windows 11 (Pro, 22H2).ß
+- Preinstalled artifacts needed for test execution such as browsers, powershell, nodejs etc.
 
 ## Application Architecture
 
