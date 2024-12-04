@@ -65,7 +65,6 @@ param Apt_get_DockerComposePlugin_options string = ''
 param serviceName string = 'linux-server-vm'
 param tags object = {}
 
-// Variables
 var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks', labName, labVirtualNetworkName)
 var vmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, linuxAppServerVmName)
 var fullVmName = '${labName}/${linuxAppServerVmName}'
@@ -133,7 +132,6 @@ var defaultArtifacts = [
   }
 ]
 
-// Create the Virtual Machine with artifacts
 resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
   name: fullVmName
   location: location

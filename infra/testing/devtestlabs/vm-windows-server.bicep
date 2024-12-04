@@ -83,12 +83,10 @@ param Agent_replaceAgent bool = true
 param serviceName string = 'windows-server-vm'
 param tags object = {}
 
-// Variables
 var fullVmName = '${labName}/${vmName}'
 var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks', labName, labVirtualNetworkName)
 var vmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, vmName)
 
-// Create the Virtual Machine with artifacts
 var defaultArtifacts = [
   {
     artifactId: resourceId(
@@ -190,7 +188,6 @@ var defaultArtifacts = [
   }
 ]
 
-// Create the Virtual Machine
 resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
   name: fullVmName
   location: location
