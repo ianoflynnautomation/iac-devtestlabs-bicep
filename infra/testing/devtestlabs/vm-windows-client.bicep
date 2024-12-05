@@ -105,6 +105,42 @@ var fullVmName = '${labName}/${vmName}'
 var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks', labName, labVirtualNetworkName)
 var vmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, vmName)
 
+
+resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
+  name: fullVmName
+  location: location
+  tags: union(tags, { 'azd-service-name': serviceName })
+  properties: {
+    labVirtualNetworkId: labVirtualNetwordId
+    galleryImageReference: {
+      offer: imageOffer
+      publisher: 'microsoftwindowsdesktop'
+      sku: imageSku
+      osType: 'Windows'
+      version: 'latest'
+    }
+    size: vmSize
+    userName: vmUserName
+    password: adminPassword
+    isAuthenticationWithSshKey: false
+    artifacts: union(chromebrowserArtifacts, firefoxBrowserArtifacts, defaultArtifacts)
+    labSubnetName: labSubnetName
+    disallowPublicIpAddress: true
+    storageType: osDiskType
+    allowClaim: false
+    // networkInterface: {
+    //   sharedPublicIpAddressConfiguration: {
+    //     useInboundNatRules: [
+    //       {
+    //       transportRuleName: 'tcp'
+    //       backendPort: 3389
+    //       }
+    //     ]
+    //   }
+    // }
+  }
+}
+
 var chromebrowserArtifacts = [
   {
     artifactId: resourceId(
@@ -263,41 +299,6 @@ var defaultArtifacts = [
     ]
   }
 ]
-
-resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
-  name: fullVmName
-  location: location
-  tags: union(tags, { 'azd-service-name': serviceName })
-  properties: {
-    labVirtualNetworkId: labVirtualNetwordId
-    galleryImageReference: {
-      offer: imageOffer
-      publisher: 'microsoftwindowsdesktop'
-      sku: imageSku
-      osType: 'Windows'
-      version: 'latest'
-    }
-    size: vmSize
-    userName: vmUserName
-    password: adminPassword
-    isAuthenticationWithSshKey: false
-    artifacts: union(chromebrowserArtifacts, firefoxBrowserArtifacts, defaultArtifacts)
-    labSubnetName: labSubnetName
-    disallowPublicIpAddress: true
-    storageType: osDiskType
-    allowClaim: false
-    // networkInterface: {
-    //   sharedPublicIpAddressConfiguration: {
-    //     useInboundNatRules: [
-    //       {
-    //       transportRuleName: 'tcp'
-    //       backendPort: 3389
-    //       }
-    //     ]
-    //   }
-    // }
-  }
-}
 
 output labVMId string = vmId
 output labVMName string = vm.name

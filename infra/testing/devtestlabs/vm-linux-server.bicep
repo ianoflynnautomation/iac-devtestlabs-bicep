@@ -69,6 +69,41 @@ var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks'
 var vmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, linuxAppServerVmName)
 var fullVmName = '${labName}/${linuxAppServerVmName}'
 
+resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
+  name: fullVmName
+  location: location
+  tags: union(tags, { 'azd-service-name': serviceName })
+  properties: {
+    labVirtualNetworkId: labVirtualNetwordId
+    galleryImageReference: {
+      offer: imageOffer
+      publisher: 'canonical'
+      sku: imageSku
+      osType: 'Linux'
+      version: 'latest'
+    }
+    size: vmSize
+    userName: vmUserName
+    password: adminPassword
+    isAuthenticationWithSshKey: false
+    artifacts: defaultArtifacts
+    labSubnetName: labSubnetName
+    disallowPublicIpAddress: true
+    storageType: osDiskType
+    allowClaim: false
+    // networkInterface: {
+    //   sharedPublicIpAddressConfiguration: {
+    //     useInboundNatRules: [
+    //       {
+    //       transportRuleName: 'tcp'
+    //       backendPort: 3389
+    //       }
+    //     ]
+    //   }
+    // }
+  }
+}
+
 var defaultArtifacts = [
   {
     artifactId: resourceId(
@@ -132,39 +167,5 @@ var defaultArtifacts = [
   }
 ]
 
-resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
-  name: fullVmName
-  location: location
-  tags: union(tags, { 'azd-service-name': serviceName })
-  properties: {
-    labVirtualNetworkId: labVirtualNetwordId
-    galleryImageReference: {
-      offer: imageOffer
-      publisher: 'canonical'
-      sku: imageSku
-      osType: 'Linux'
-      version: 'latest'
-    }
-    size: vmSize
-    userName: vmUserName
-    password: adminPassword
-    isAuthenticationWithSshKey: false
-    artifacts: defaultArtifacts
-    labSubnetName: labSubnetName
-    disallowPublicIpAddress: true
-    storageType: osDiskType
-    allowClaim: false
-    // networkInterface: {
-    //   sharedPublicIpAddressConfiguration: {
-    //     useInboundNatRules: [
-    //       {
-    //       transportRuleName: 'tcp'
-    //       backendPort: 3389
-    //       }
-    //     ]
-    //   }
-    // }
-  }
-}
 output labVMId string = vmId
 output labVMName string = vm.name

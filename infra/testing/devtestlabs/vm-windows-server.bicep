@@ -87,6 +87,31 @@ var fullVmName = '${labName}/${vmName}'
 var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks', labName, labVirtualNetworkName)
 var vmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, vmName)
 
+resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
+  name: fullVmName
+  location: location
+  tags: union(tags, { 'azd-service-name': serviceName })
+  properties: {
+    labVirtualNetworkId: labVirtualNetwordId
+    galleryImageReference: {
+      offer: imageOffer
+      publisher: 'microsoftwindowsserver'
+      sku: imageSku
+      osType: 'Windows'
+      version: 'latest'
+    }
+    size: vmSize
+    userName: vmUserName
+    password: adminPassword
+    isAuthenticationWithSshKey: false
+    artifacts: defaultArtifacts
+    labSubnetName: labSubnetName
+    disallowPublicIpAddress: true
+    storageType: osDiskType
+    allowClaim: false
+  }
+}
+
 var defaultArtifacts = [
   {
     artifactId: resourceId(
@@ -188,30 +213,6 @@ var defaultArtifacts = [
   }
 ]
 
-resource vm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
-  name: fullVmName
-  location: location
-  tags: union(tags, { 'azd-service-name': serviceName })
-  properties: {
-    labVirtualNetworkId: labVirtualNetwordId
-    galleryImageReference: {
-      offer: imageOffer
-      publisher: 'microsoftwindowsserver'
-      sku: imageSku
-      osType: 'Windows'
-      version: 'latest'
-    }
-    size: vmSize
-    userName: vmUserName
-    password: adminPassword
-    isAuthenticationWithSshKey: false
-    artifacts: defaultArtifacts
-    labSubnetName: labSubnetName
-    disallowPublicIpAddress: true
-    storageType: osDiskType
-    allowClaim: false
-  }
-}
 
 output labVMId string = vmId
 output labVMName string = vm.name

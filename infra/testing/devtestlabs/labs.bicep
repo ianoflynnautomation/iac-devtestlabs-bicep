@@ -195,6 +195,80 @@ resource labVirtualNetwork 'Microsoft.DevTestLab/labs/virtualnetworks@2018-09-15
   name: labVirtualNetworkName
 }
 
+resource linuxAppServerVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
+  parent: lab
+  name: linuxAppServerVmFullVmName
+  location: location
+  tags: union(tags, { 'azd-service-name': linuxVmServiceName })
+  properties: {
+    labVirtualNetworkId: labVirtualNetwordId
+    galleryImageReference: {
+      offer: linuxAppServerVmImageOffer
+      publisher: 'canonical'
+      sku: linuxAppServerVmImageSku
+      osType: 'Linux'
+      version: 'latest'
+    }
+    size: linuxAppServerVmSize
+    userName: linuxAppServerVmUserName
+    password: linuxAppServerVmAdminPassword
+    isAuthenticationWithSshKey: false
+    artifacts: linuxVmDefaultArtifacts
+    labSubnetName: labSubnetName
+    disallowPublicIpAddress: true
+    storageType: linuxAppServerVmOsDiskType
+    allowClaim: false
+    // networkInterface: {
+    //   sharedPublicIpAddressConfiguration: {
+    //     useInboundNatRules: [
+    //       {
+    //       transportRuleName: 'tcp'
+    //       backendPort: 3389
+    //       }
+    //     ]
+    //   }
+    // }
+  }
+}
+
+resource windowsClientVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = [
+  for i in range(0, windowsClientVmCount): {
+    parent: lab
+    name: '${windowsClientVmFullVmName}${i}'
+    location: location
+    tags: union(tags, { 'azd-service-name': windowsClientVmServiceName })
+    properties: {
+      labVirtualNetworkId: labVirtualNetwordId
+      galleryImageReference: {
+        offer: windowsClientVmImageOffer
+        publisher: 'microsoftwindowsdesktop'
+        sku: windowsClientVmImageSku
+        osType: 'Windows'
+        version: 'latest'
+      }
+      size: windowsClientVmSize
+      userName: windowsClientVmUserName
+      password: windowsClientVmAdminPassword
+      isAuthenticationWithSshKey: false
+      artifacts: union(chromebrowserArtifacts, firefoxBrowserArtifacts, windowsClientVmDefaultArtifacts)
+      labSubnetName: labSubnetName
+      disallowPublicIpAddress: true
+      storageType: windowsClientVmOsDiskType
+      allowClaim: false
+      // networkInterface: {
+      //   sharedPublicIpAddressConfiguration: {
+      //     useInboundNatRules: [
+      //       {
+      //       transportRuleName: 'tcp'
+      //       backendPort: 3389
+      //       }
+      //     ]
+      //   }
+      // }
+    }
+  }
+]
+
 var linuxVmDefaultArtifacts = [
   {
     artifactId: resourceId(
@@ -257,42 +331,6 @@ var linuxVmDefaultArtifacts = [
     ]
   }
 ]
-
-resource linuxAppServerVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
-  parent: lab
-  name: linuxAppServerVmFullVmName
-  location: location
-  tags: union(tags, { 'azd-service-name': linuxVmServiceName })
-  properties: {
-    labVirtualNetworkId: labVirtualNetwordId
-    galleryImageReference: {
-      offer: linuxAppServerVmImageOffer
-      publisher: 'canonical'
-      sku: linuxAppServerVmImageSku
-      osType: 'Linux'
-      version: 'latest'
-    }
-    size: linuxAppServerVmSize
-    userName: linuxAppServerVmUserName
-    password: linuxAppServerVmAdminPassword
-    isAuthenticationWithSshKey: false
-    artifacts: linuxVmDefaultArtifacts
-    labSubnetName: labSubnetName
-    disallowPublicIpAddress: true
-    storageType: linuxAppServerVmOsDiskType
-    allowClaim: false
-    // networkInterface: {
-    //   sharedPublicIpAddressConfiguration: {
-    //     useInboundNatRules: [
-    //       {
-    //       transportRuleName: 'tcp'
-    //       backendPort: 3389
-    //       }
-    //     ]
-    //   }
-    // }
-  }
-}
 
 var chromebrowserArtifacts = [
   {
@@ -453,43 +491,6 @@ var windowsClientVmDefaultArtifacts = [
   }
 ]
 
-resource windowsClientVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = [
-  for i in range(0, windowsClientVmCount): {
-    parent: lab
-    name: '${windowsClientVmFullVmName}${i}'
-    location: location
-    tags: union(tags, { 'azd-service-name': windowsClientVmServiceName })
-    properties: {
-      labVirtualNetworkId: labVirtualNetwordId
-      galleryImageReference: {
-        offer: windowsClientVmImageOffer
-        publisher: 'microsoftwindowsdesktop'
-        sku: windowsClientVmImageSku
-        osType: 'Windows'
-        version: 'latest'
-      }
-      size: windowsClientVmSize
-      userName: windowsClientVmUserName
-      password: windowsClientVmAdminPassword
-      isAuthenticationWithSshKey: false
-      artifacts: union(chromebrowserArtifacts, firefoxBrowserArtifacts, windowsClientVmDefaultArtifacts)
-      labSubnetName: labSubnetName
-      disallowPublicIpAddress: true
-      storageType: windowsClientVmOsDiskType
-      allowClaim: false
-      // networkInterface: {
-      //   sharedPublicIpAddressConfiguration: {
-      //     useInboundNatRules: [
-      //       {
-      //       transportRuleName: 'tcp'
-      //       backendPort: 3389
-      //       }
-      //     ]
-      //   }
-      // }
-    }
-  }
-]
 
 output windowsClientVm array = [
   for i in range(1, windowsClientVmCount): {
