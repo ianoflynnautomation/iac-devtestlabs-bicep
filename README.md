@@ -12,7 +12,6 @@ Bicep Resource Visualizer
 ## Tools we'll be using
 
 - Bicep
-- Terraform
 - Github actions
 - Azure pipelines
 - Azure azd
