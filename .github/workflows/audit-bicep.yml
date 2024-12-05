@@ -2,14 +2,14 @@ name: Scan Bicep code
 on:
   push:
     branches: 
-      - main
+      - master
     paths:
-      - "infra/bicep/**"
+      - "infra/**"
   pull_request:
     branches: 
-      - main
+      - master
     paths:
-      - "infra/bicep/**"
+      - "infra/**"
   workflow_dispatch:
 
 jobs:
