@@ -2,6 +2,10 @@
 
 The main.bicep file defines the infrastructure for a DevTest Lab environment with both Linux and Windows virtual machines, designed to spin up an environment for development or testing.
 
+
+![Lab Bicep Visualizer](./.images/lab-bicep-visualizer.png)
+
+
 ## Tools we'll be using
 
 - Bicep
