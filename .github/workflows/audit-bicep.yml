@@ -1,29 +1,26 @@
 name: Scan Bicep code
 on:
   push:
-    branches: 
-      - master
-    paths:
-      - "infra/**"
-  pull_request:
-    branches: 
-      - master
-    paths:
-      - "infra/**"
-  workflow_dispatch:
+    branches:
+      - '**'
+
+permissions:
+  id-token: write 
+  security-events: write 
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Microsoft Security DevOps Analysis
-        uses: microsoft/security-devops-action@preview
+      - uses: ./
         id: msdo
+
+      - name: Run Microsoft Security DevOps
+        uses: microsoft/security-devops-action@latest
         continue-on-error: true
         with:
           tools: templateanalyzer
