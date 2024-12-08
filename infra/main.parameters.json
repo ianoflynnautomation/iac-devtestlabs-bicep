@@ -7,18 +7,6 @@
       },
       "location": {
         "value": "${AZURE_LOCATION}"
-      },
-      "orgainsationName":{
-        "value": "${AZURE_ORG_NAME}"
-      },
-      "agentPat": {
-        "value": "${AZURE_AGENT_PAT}"
-      },
-      "agentPool": {
-        "value": "${AZURE_AGENT_POOL_NAME}"
-      },
-      "vmUserPassword" : {
-        "value": "${AZURE_VM_USER_PASSWORD}"
       }
     }
 }

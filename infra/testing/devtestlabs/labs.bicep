@@ -1,170 +1,82 @@
 metadata description = 'Create a DevTest Lab with a Virtual Network '
 
-// DevTest Lab parameters
+@description('The location of the DevTest Lab')
+@minLength(1)
+param location string = resourceGroup().location
+@description('The name of the environment')
+@allowed([
+  'dev'
+  'staging'
+])
+param environmentName string
+@description('The deployment type of the DevTest Lab')
+@allowed([
+  'on-prem'
+  'saas'
+])
+param deploymentType string
 @description('The name of the DevTest Lab')
 @minLength(1)
 @maxLength(64)
 param labName string
-@description('The storage type of the lab')
-@allowed([
-  'Standard'
-  'Premium'
-])
-param labStorageType string = 'Premium'
-@description('The location of the DevTest Lab')
-@minLength(1)
-param location string = resourceGroup().location
-@description('Load shared prefixes')
-param labServiceName string = 'lab'
+@description('The tags for the DevTest Lab')
 param tags object = {}
-@description('The name of the VM in the DevTest Lab')
-@minLength(1)
-@maxLength(62)
-
-// Linux App Server VM parameters
-param linuxAppServerVmName string
-@description('The size of the virtual machine.')
-@allowed([
-  'Standard_D2ds_v4'
-  'Standard_D4ds_v4'
-  'Standard_D8ds_v4'
-])
-param linuxAppServerVmSize string
+@description('The name of the agent')
+@minValue(1)
+@maxValue(10)
+param windowsClientVmCount int
+@description('The name of Azure DevOps account')
+@secure()
+param adoAccountName string
+@description('The Azure DevOps PAT token')
+@secure()
+param adoPatToken string
+@description('The name of the Azure DevOps pool')
+@secure()
+param adoPoolName string
 @description('The password of the virtual machine administrator.')
 @secure()
 @minLength(6)
 @maxLength(72)
 param linuxAppServerVmAdminPassword string
-@description('The offer of the image.')
-@allowed([
-  '0001-com-ubuntu-server-focal'
-  '0001-com-ubuntu-server-jammy'
-])
-param linuxAppServerVmImageOffer string
-@description('The SKU of the image.')
-@allowed([
-  '20_04-lts'
-  '22_04-lts'
-])
-param linuxAppServerVmImageSku string
-@description('The size of the virtual machine.')
-@allowed([
-  'StandardSSD'
-  'StandardHDD'
-])
-param linuxAppServerVmOsDiskType string = 'StandardSSD'
-@description('Azure DevOps Account for the agent')
-param Agent_for_Linux_adoAccount string
-@description('Azure DevOps PAT for the agent')
-@secure()
-param Agent_for_Linux_adoPat string
-@description('Azure DevOps Pool for the agent')
-param Agent_for_Linux_adoPool string
-@description('The user name of the virtual machine.')
-param linuxAppServerVmUserName string = 'testuser'
-@description('Path to install the agent')
-param Agent_for_Linux_agentPath string = '/agent'
-@description('Name of the agent')
-param Agent_for_Linux_agentName string = ''
-@description('Docker Compose Plugin packages')
-param Apt_get_DockerComposePlugin_packages string = 'docker-compose-plugin'
-@description('Docker Compose Plugin update')
-param Apt_get_DockerComposePlugin_update string = 'true'
-@description('Docker Compose Plugin options')
-param Apt_get_DockerComposePlugin_options string = ''
-param linuxVmServiceName string = 'linux-server-vm'
-
-// Windows client VM parameters
-@description('The name of the VM in the DevTest Lab')
-@minLength(1)
-@maxLength(15)
-param windowsClientVmName string = 'c-vm'
-@description('The size of the virtual machine.')
-@allowed([
-  'Standard_D2ds_v4'
-  'Standard_D4ds_v4'
-  'Standard_D8ds_v4'
-])
-param windowsClientVmSize string = 'Standard_D2ds_v4'
-@description('The user name of the virtual machine.')
-param windowsClientVmUserName string = 'tester'
 @description('The password of the virtual machine administrator.')
 @secure()
 @minLength(8)
 @maxLength(123)
 param windowsClientVmAdminPassword string
-@description('The offer of the image.')
-@allowed([
-  'Windows-11'
-  'Windows-10'
-])
-param windowsClientVmImageOffer string = 'Windows-11'
-@description('The SKU of the image.')
-@allowed([
-  'win11-22h2-pro'
-  'win10-22h2-pro'
-])
-param windowsClientVmImageSku string = 'win11-22h2-pro'
-@description('Azure DevOps Account for the agent')
-param Agent_vstsAccount string = ''
-@description('Azure DevOps PAT for the agent')
-@secure()
-param Agent_vstsPassword string
-@description('Name of the agent')
-param Agent_agentName string = ''
-@description('Azure DevOps Pool for the agent')
-param Agent_poolName string = ''
-@description('The size of the virtual machine.')
-@allowed([
-  'StandardSSD'
-  'StandardHDD'
-])
-param windowsClientVmOsDiskType string = 'StandardSSD'
-@description('Chocolatey packages for Chrome')
-param Install_Chocolatey_Packages_chrome_package string = 'googlechrome'
-@description('Version of the Chocolatey package for Chrome')
-param Install_Chocolatey_Packages_chrome_packageVersion string = 'latest'
-@description('Allow empty checksums for Chocolatey packages for Chrome')
-param Install_Chocolatey_Packages_chrome_allowEmptyChecksums bool = true
-@description('Ignore checksums for Chocolatey packages for Chrome')
-param Install_Chocolatey_Packages_chrome_ignoreChecksums bool = true
-@description('Chocolatey packages for Firefox')
-param Install_Chocolatey_Packages_firefox_package string = 'firefox'
-@description('Version of the Chocolatey package for Firefox')
-param Install_Chocolatey_Packages_firefox_packageVersion string = 'latest'
-@description('Allow empty checksums for Chocolatey packages for Firefox')
-param Install_Chocolatey_Packages_firefox_allowEmptyChecksums bool = true
-@description('Ignore checksums for Chocolatey packages for Firefox')
-param Install_Chocolatey_Packages_firefox_ignoreChecksums bool = true
-@description('Chocolatey packages for PowerShell')
-param Install_Chocolatey_Packages_ps_packages string = 'powershell-core'
-@description('Allow empty checksums for Chocolatey packages for PowerShell')
-param Install_Chocolatey_Packages_ps_allowEmptyChecksums bool = true
-@description('Ignore checksums for Chocolatey packages for PowerShell')
-param Install_Chocolatey_Packages_ps_ignoreChecksums bool = true
-@description('Chocolatey packages for Azure CLI')
-param Install_Chocolatey_Packages_az_packages string = 'azure-cli'
-@description('Allow empty checksums for Chocolatey packages for Azure CLI')
-param Install_Chocolatey_Packages_az_allowEmptyChecksums bool = true
-@description('Ignore checksums for Chocolatey packages for Azure CLI')
-param Install_Chocolatey_Packages_az_ignoreChecksums bool = true
-@description('Suffix for the agent name')
-param Agent_agentNameSuffix string = ''
-@description('Run as auto logon')
-param Agent_RunAsAutoLogon bool = false
-@description('Windows logon account')
-param Agent_windowsLogonAccount string = ''
-@description('Windows logon password')
-@secure()
-param Agent_windowsLogonPassword string
-@description('Driver letter')
-param Agent_driverLetter string = 'C'
-@description('Work directory')
-param Agent_workDirectory string = ''
-@description('Replace agent')
-param Agent_replaceAgent bool = true
-param windowsClientVmServiceName string = 'windows-client-vm'
-param windowsClientVmCount int
+
+@description('Configuration for Linux app server VMs')
+param linuxAppServerVmConfig object = {
+  dev: {
+    imageOffer: '0001-com-ubuntu-server-focal'
+    imageSku: '20_04-lts'
+    storageType: 'StandardSSD'
+    vmSize: 'Standard_D2ds_v4'
+  }
+  staging: {
+    imageOffer: '0001-com-ubuntu-server-focal'
+    imageSku: '20_04-lts'
+    storageType: 'StandardSSD'
+    vmSize: 'Standard_D8ds_v4'
+  }
+}
+
+@description('Configuration for Windows client VMs')
+param windowsClientVmConfig object = {
+  dev: {
+    imageOffer: 'Windows-11'
+    imageSku: 'win11-22h2-pro'
+    storageType: 'StandardSSD'
+    vmSize: 'Standard_D2ds_v4'
+  }
+  staging: {
+    imageOffer: 'Windows-11'
+    imageSku: 'win11-22h2-pro'
+    storageType: 'StandardSSD'
+    vmSize: 'Standard_D8ds_v4'
+  }
+}
+
 
 var labVirtualNetwordId = resourceId('Microsoft.DevTestLab/labs/virtualnetworks', labName, labVirtualNetworkName)
 // var windowsClientVmId = resourceId('Microsoft.DevTestLab/labs/virtualmachines', labName, linuxAppServerVmName)
@@ -175,6 +87,46 @@ var linuxAppServerVmFullVmName = linuxAppServerVmName
 var windowsClientVmFullVmName = windowsClientVmName
 var labVirtualNetworkName = 'Dtl${labName}'
 var labSubnetName = '${labVirtualNetworkName}Subnet'
+var labServiceName = 'lab'
+var labStorageType = 'Standard'
+
+var linuxAppServerVmUserName = 'testuser'
+var linuxAppServerVmName = 'vm-las'
+var linuxVmServiceName = 'linux-server-vm'
+
+var agentForLinuxAgentPath = '/agent'
+var agentForLinuxAgentName = ''
+var aptGetDockerComposePluginPackages = 'docker-compose-plugin'
+var aptGetDockerComposePluginUpdate = 'true'
+var aptGetDockerComposePluginOptions = ''
+
+var windowsClientVmServiceName = 'windows-client-vm'
+var agentForWindowsAgentName = ''
+var windowsClientVmUserName = 'tester'
+var windowsClientVmName = 'vm-ui'
+
+var agentWindowsLogonPassword = ''
+var agentReplaceAgent = true
+var agentWorkDirectory = ''
+var agentDriverLetter = 'C'
+var agentWindowsLogonAccount = ''
+var agentRunAsAutoLogon = false
+var agentNameSuffix = ''
+var installChocolateyPackagesChromePackage = 'googlechrome'
+var installChocolateyPackagesChromePackageVersion = 'latest'
+var installChocolateyPackagesChromeAllowEmptyChecksums = true
+var installChocolateyPackagesChromeIgnoreChecksums = true
+var installChocolateyPackagesFirefoxPackage = 'firefox'
+var installChocolateyPackagesFirefoxPackageVersion = 'latest'
+var installChocolateyPackagesFirefoxAllowEmptyChecksums = true
+var installChocolateyPackagesFirefoxIgnoreChecksums = true
+var installChocolateyPackagesPsPackages = 'powershell-core'
+var installChocolateyPackagesPsAllowEmptyChecksums = true
+var installChocolateyPackagesPsIgnoreChecksums = true
+var installChocolateyPackagesAzPackages = 'azure-cli'
+var installChocolateyPackagesAzAllowEmptyChecksums = true
+var installChocolateyPackagesAzIgnoreChecksums = true
+
 
 resource lab 'Microsoft.DevTestLab/labs@2018-09-15' = {
   name: labName
@@ -195,7 +147,7 @@ resource labVirtualNetwork 'Microsoft.DevTestLab/labs/virtualnetworks@2018-09-15
   name: labVirtualNetworkName
 }
 
-resource linuxAppServerVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = {
+resource linuxAppServerVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' = if (deploymentType == 'on-prem') {
   parent: lab
   name: linuxAppServerVmFullVmName
   location: location
@@ -203,31 +155,21 @@ resource linuxAppServerVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15'
   properties: {
     labVirtualNetworkId: labVirtualNetwordId
     galleryImageReference: {
-      offer: linuxAppServerVmImageOffer
+      offer: linuxAppServerVmConfig[environmentName].imageOffer
       publisher: 'canonical'
-      sku: linuxAppServerVmImageSku
+      sku: linuxAppServerVmConfig[environmentName].imageSku
       osType: 'Linux'
       version: 'latest'
     }
-    size: linuxAppServerVmSize
+    size: linuxAppServerVmConfig[environmentName].vmSize
     userName: linuxAppServerVmUserName
     password: linuxAppServerVmAdminPassword
     isAuthenticationWithSshKey: false
     artifacts: linuxVmDefaultArtifacts
     labSubnetName: labSubnetName
     disallowPublicIpAddress: true
-    storageType: linuxAppServerVmOsDiskType
+    storageType: linuxAppServerVmConfig[environmentName].storageType
     allowClaim: false
-    // networkInterface: {
-    //   sharedPublicIpAddressConfiguration: {
-    //     useInboundNatRules: [
-    //       {
-    //       transportRuleName: 'tcp'
-    //       backendPort: 3389
-    //       }
-    //     ]
-    //   }
-    // }
   }
 }
 
@@ -240,31 +182,21 @@ resource windowsClientVm 'Microsoft.DevTestLab/labs/virtualmachines@2018-09-15' 
     properties: {
       labVirtualNetworkId: labVirtualNetwordId
       galleryImageReference: {
-        offer: windowsClientVmImageOffer
+        offer: windowsClientVmConfig[environmentName].imageOffer
         publisher: 'microsoftwindowsdesktop'
-        sku: windowsClientVmImageSku
+        sku: windowsClientVmConfig[environmentName].imageSku
         osType: 'Windows'
         version: 'latest'
       }
-      size: windowsClientVmSize
+      size: windowsClientVmConfig[environmentName].vmSize
       userName: windowsClientVmUserName
       password: windowsClientVmAdminPassword
       isAuthenticationWithSshKey: false
       artifacts: union(chromebrowserArtifacts, firefoxBrowserArtifacts, windowsClientVmDefaultArtifacts)
       labSubnetName: labSubnetName
       disallowPublicIpAddress: true
-      storageType: windowsClientVmOsDiskType
+      storageType: windowsClientVmConfig[environmentName].storageType
       allowClaim: false
-      // networkInterface: {
-      //   sharedPublicIpAddressConfiguration: {
-      //     useInboundNatRules: [
-      //       {
-      //       transportRuleName: 'tcp'
-      //       backendPort: 3389
-      //       }
-      //     ]
-      //   }
-      // }
     }
   }
 ]
@@ -288,15 +220,15 @@ var linuxVmDefaultArtifacts = [
     parameters: [
       {
         name: 'packages'
-        value: Apt_get_DockerComposePlugin_packages
+        value: aptGetDockerComposePluginPackages
       }
       {
         name: 'update'
-        value: Apt_get_DockerComposePlugin_update
+        value: aptGetDockerComposePluginUpdate
       }
       {
         name: 'options'
-        value: Apt_get_DockerComposePlugin_options
+        value: aptGetDockerComposePluginOptions
       }
     ]
   }
@@ -310,23 +242,23 @@ var linuxVmDefaultArtifacts = [
     parameters: [
       {
         name: 'adoAccount'
-        value: Agent_for_Linux_adoAccount
+        value: adoAccountName
       }
       {
         name: 'adoPat'
-        value: Agent_for_Linux_adoPat
+        value: adoPatToken
       }
       {
         name: 'adoPool'
-        value: Agent_for_Linux_adoPool
+        value: adoPoolName
       }
       {
         name: 'agentPath'
-        value: Agent_for_Linux_agentPath
+        value: agentForLinuxAgentPath
       }
       {
         name: 'agentName'
-        value: Agent_for_Linux_agentName
+        value: agentForLinuxAgentName
       }
     ]
   }
@@ -343,19 +275,19 @@ var chromebrowserArtifacts = [
     parameters: [
       {
         name: 'packages'
-        value: Install_Chocolatey_Packages_chrome_package
+        value: installChocolateyPackagesChromePackage
       }
       {
         name: 'packageVersion'
-        value: Install_Chocolatey_Packages_chrome_packageVersion
+        value: installChocolateyPackagesChromePackageVersion
       }
       {
         name: 'allowEmptyChecksums'
-        value: Install_Chocolatey_Packages_chrome_allowEmptyChecksums
+        value: installChocolateyPackagesChromeAllowEmptyChecksums
       }
       {
         name: 'ignoreChecksums'
-        value: Install_Chocolatey_Packages_chrome_ignoreChecksums
+        value: installChocolateyPackagesChromeIgnoreChecksums
       }
     ]
   }
@@ -372,19 +304,19 @@ var firefoxBrowserArtifacts = [
     parameters: [
       {
         name: 'packages'
-        value: Install_Chocolatey_Packages_firefox_package
+        value: installChocolateyPackagesFirefoxPackage
       }
       {
         name: 'packageVersion'
-        value: Install_Chocolatey_Packages_firefox_packageVersion
+        value: installChocolateyPackagesFirefoxPackageVersion
       }
       {
         name: 'allowEmptyChecksums'
-        value: Install_Chocolatey_Packages_firefox_allowEmptyChecksums
+        value: installChocolateyPackagesFirefoxAllowEmptyChecksums
       }
       {
         name: 'ignoreChecksums'
-        value: Install_Chocolatey_Packages_firefox_ignoreChecksums
+        value: installChocolateyPackagesFirefoxIgnoreChecksums
       }
     ]
   }
@@ -401,15 +333,15 @@ var windowsClientVmDefaultArtifacts = [
     parameters: [
       {
         name: 'packages'
-        value: Install_Chocolatey_Packages_ps_packages
+        value: installChocolateyPackagesPsPackages
       }
       {
         name: 'allowEmptyChecksums'
-        value: Install_Chocolatey_Packages_ps_allowEmptyChecksums
+        value: installChocolateyPackagesPsAllowEmptyChecksums
       }
       {
         name: 'ignoreChecksums'
-        value: Install_Chocolatey_Packages_ps_ignoreChecksums
+        value: installChocolateyPackagesPsIgnoreChecksums
       }
     ]
   }
@@ -423,15 +355,15 @@ var windowsClientVmDefaultArtifacts = [
     parameters: [
       {
         name: 'packages'
-        value: Install_Chocolatey_Packages_az_packages
+        value: installChocolateyPackagesAzPackages
       }
       {
         name: 'allowEmptyChecksums'
-        value: Install_Chocolatey_Packages_az_allowEmptyChecksums
+        value: installChocolateyPackagesAzAllowEmptyChecksums
       }
       {
         name: 'ignoreChecksums'
-        value: Install_Chocolatey_Packages_az_ignoreChecksums
+        value: installChocolateyPackagesAzIgnoreChecksums
       }
     ]
   }
@@ -445,52 +377,51 @@ var windowsClientVmDefaultArtifacts = [
     parameters: [
       {
         name: 'vstsAccount'
-        value: Agent_vstsAccount
+        value: adoAccountName
       }
       {
         name: 'vstsPassword'
-        value: Agent_vstsPassword
+        value: adoPatToken
       }
       {
         name: 'agentName'
-        value: Agent_agentName
+        value: agentForWindowsAgentName
       }
       {
         name: 'agentNameSuffix'
-        value: Agent_agentNameSuffix
+        value: agentNameSuffix
       }
       {
         name: 'poolName'
-        value: Agent_poolName
+        value: adoPoolName
       }
       {
         name: 'RunAsAutoLogon'
-        value: Agent_RunAsAutoLogon
+        value: agentRunAsAutoLogon
       }
       {
         name: 'windowsLogonAccount'
-        value: Agent_windowsLogonAccount
+        value: agentWindowsLogonAccount
       }
       {
         name: 'windowsLogonPassword'
-        value: Agent_windowsLogonPassword
+        value: agentWindowsLogonPassword
       }
       {
         name: 'driverLetter'
-        value: Agent_driverLetter
+        value: agentDriverLetter
       }
       {
         name: 'workDirectory'
-        value: Agent_workDirectory
+        value: agentWorkDirectory
       }
       {
         name: 'replaceAgent'
-        value: Agent_replaceAgent
+        value: agentReplaceAgent
       }
     ]
   }
 ]
-
 
 output windowsClientVm array = [
   for i in range(1, windowsClientVmCount): {
